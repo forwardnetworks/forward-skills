@@ -14,7 +14,8 @@ Forward platform  -> the digital twin
 ## Quick start (Claude Code, Codex or Gemini)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/forwardnetworks/forward-skills/main/scripts/install.sh | sh   # the fwdctl binary
+brew install forwardnetworks/tap/fwdctl        # the fwdctl binary (macOS, Linux); or, anywhere:
+curl -fsSL https://raw.githubusercontent.com/forwardnetworks/fwdctl/main/install.sh | sh   # more: github.com/forwardnetworks/fwdctl
 fwdctl login --file ~/forward.token      # once: remember the login (file format below)
 ```
 

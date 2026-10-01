@@ -11,6 +11,7 @@ configured static routes, or any block-pattern query that returns nothing.
 - Why a pattern returns nothing, or will not compile
 - Configured static routes (starting patterns)
 - Endpoints: which profile asks for what, and which product it is
+- What did an endpoint's profile collect? (alias summary and the entries)
 
 ## What the model does not hold
 
@@ -181,3 +182,24 @@ version OID, so no configuration reached the model.
 
 `rawOidEntries` has `oid`, `oidNumbers` and `rawValue` (not `value`). `sysDescr` groups by product family and `sysObjectId` by enterprise
 subtree. Forward collects only the OIDs a profile lists, so "does this device expose OID X" cannot be answered from the model.
+
+### What did an endpoint's profile collect? (alias summary and the entries)
+
+After a collection, `snmpOutputs` shows per requested alias whether it was walked and how many entries came back (a peer measured a vendor
+subtree root being walked as a subtree: one alias returned 688 entries, a scalar group plus a 32-row table, and none of it was configuration):
+
+    // one row per requested alias: status and number of entries
+    foreach e in network.endpoints
+    where e.name == "<endpoint>"
+    foreach o in e.snmpOutputs
+    select {endpoint: e.name, alias: o.alias, requestedOid: o.requestedOid, status: toString(o.status), entries: length(o.rawOidEntries)}
+
+    // the entries of one alias
+    foreach e in network.endpoints
+    where e.name == "<endpoint>"
+    foreach o in e.snmpOutputs
+    where o.alias == "<alias>"
+    foreach r in o.rawOidEntries
+    select {oid: r.oid, value: r.rawValue}
+
+The `status` field type is an enum: `toString` is only a convenience for printing it. Run them with `fwdctl nqe run --network ID --file F`.
