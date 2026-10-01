@@ -1,0 +1,35 @@
+{
+  "name": "forward-skills",
+  "version": "0.5.38",
+  "description": "Evidence-returning network skills over Forward Networks. Needs the fwdctl binary on PATH.",
+  "author": {
+    "name": "Forward Networks"
+  },
+  "homepage": "https://github.com/forwardnetworks/forward-skills",
+  "repository": "https://github.com/forwardnetworks/forward-skills",
+  "license": "Proprietary",
+  "keywords": [
+    "forward networks",
+    "network",
+    "nqe",
+    "reachability",
+    "compliance"
+  ],
+  "interface": {
+    "displayName": "Forward Skills",
+    "shortDescription": "Network skills over Forward Networks",
+    "longDescription": "Reachability, change verification, compliance, vulnerabilities, inventory, device configs and NQE authoring over a Forward Networks digital twin. Each skill runs through the fwdctl binary and returns evidence.",
+    "developerName": "Forward Networks",
+    "category": "Engineering",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use investigate-reachability to check whether 10.0.0.1 can reach 10.0.0.2 on tcp/443.",
+      "Use check-network-compliance to summarise failing checks.",
+      "Use author-nqe-query to write and lint an NQE query for devices with BGP neighbors that are not established."
+    ]
+  },
+  "skills": "./skills/"
+}

@@ -1,0 +1,7 @@
+{
+  "nqe": {
+    "command": "fwdctl",
+    "args": ["nqe", "lsp"],
+    "extensionToLanguage": { ".nqe": "nqe" }
+  }
+}

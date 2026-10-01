@@ -1,0 +1,11 @@
+{
+  "name": "forward-skills",
+  "owner": { "name": "Forward Networks" },
+  "plugins": [
+    {
+      "name": "forward-skills",
+      "source": ".",
+      "description": "Evidence-returning network skills over Forward Networks: reachability, change verification, compliance, vulnerabilities, inventory, device configs and NQE."
+    }
+  ]
+}
