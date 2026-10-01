@@ -18,7 +18,7 @@ metadata:
    `nqe_examples` tool. They are real queries for real questions; imitate their shape, not their names.
 2. Look up the real names you are about to use: `fwdctl context schema "<term>"` (or the `nqe_schema` tool) searches Forward's
    data model and lists enum values. Never guess a field or an enum value.
-3. Write the query against [the cheat sheet](reference/cheatsheet.md) and [the rules for choosing what to query](reference/rules.md). Do not invent schema names.
+3. Write the query against the cheat sheet and the rules for choosing what to query (`fwdctl describe author-nqe-query reference/cheatsheet.md` and `reference/rules.md`). Do not invent schema names.
 3a. Before running anything, check it offline: `fwdctl nqe lint query.nqe` (no Forward connection, milliseconds). It reports syntax errors with line and column, unknown names and wrong argument counts, fields or enum values the data model does not have (with the closest real ones), type errors, and deprecated constructs with Forward's own advice. Its type check is gradual: where it cannot tell a type it says nothing, so a clean result is not proof, but an error it reports is one Forward reports.
 4. Run `validate-nqe-query`. A compile error is a deterministic finding with a position: fix exactly what
    it names and run it again. Do not guess a second change.
@@ -40,11 +40,11 @@ The minimum before you answer: the existing-query search (step 1), the offline l
 
 ## Reference
 
-Read the file you need, when you need it. Where you cannot read files, run `fwdctl describe author-nqe-query <file>` (for example `reference/rules.md`).
+Read the file you need, when you need it. The cheat sheet, the rules and the syntax and types notes are served by the `fwdctl` binary and are not files beside this skill: run `fwdctl describe author-nqe-query <file>` (for example `reference/rules.md`).
 
-- [reference/cheatsheet.md](reference/cheatsheet.md): syntax forms and the roots of the data model. Read before writing.
-- [reference/rules.md](reference/rules.md): what to query: exact schema names, filters, matching the question's intent, `configured` fields, config-compliance patterns, and why not to filter on `DeviceType.ROUTER` or `SWITCH`. Read before writing.
+- `reference/cheatsheet.md` (served by `fwdctl describe author-nqe-query reference/cheatsheet.md`): syntax forms and the roots of the data model. Read before writing.
+- `reference/rules.md` (served by `fwdctl describe`): what to query: exact schema names, filters, matching the question's intent, `configured` fields, config-compliance patterns, and why not to filter on `DeviceType.ROUTER` or `SWITCH`. Read before writing.
 - [reference/synthetic-devices.md](reference/synthetic-devices.md): the row types of a query that defines a synthetic device's connections (internet node, intranet node, L3 VPN, adjacent network, L2 VPN), the starter templates (`fwdctl nqe template <kind>`), the row check (`fwdctl nqe lint --synthetic <kind>`) and the mistakes Forward only reports after attach. Read when asked to build a synthetic device from a query.
 - [reference/config-patterns.md](reference/config-patterns.md): what the model does not hold (BGP policy per neighbor, configured static routes) and the block patterns that read it from configuration text, with the reasons a pattern returns nothing or will not compile. Read when the answer is in `device.files.config`.
-- [reference/syntax-and-types.md](reference/syntax-and-types.md): type keywords, single-line versus block patterns, parenthesising a comprehension used as a value, `order by` and `limit`, and typed time arithmetic. Read when the query sorts, limits, does time arithmetic or matches patterns, or when a diagnostic mentions a type.
+- `reference/syntax-and-types.md` (served by `fwdctl describe`): type keywords, single-line versus block patterns, parenthesising a comprehension used as a value, `order by` and `limit`, and typed time arithmetic. Read when the query sorts, limits, does time arithmetic or matches patterns, or when a diagnostic mentions a type.
 
