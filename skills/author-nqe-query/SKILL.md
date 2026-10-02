@@ -19,7 +19,7 @@ metadata:
 2. Look up the real names you are about to use: `fwdctl context schema "<term>"` (or the `nqe_schema` tool) searches Forward's
    data model and lists enum values. Never guess a field or an enum value.
 3. Write the query against the cheat sheet and the rules for choosing what to query (`fwdctl describe author-nqe-query reference/cheatsheet.md` and `reference/rules.md`). Do not invent schema names.
-3a. Before running anything, check it offline: `fwdctl nqe lint query.nqe` (no Forward connection, milliseconds). It reports syntax errors with line and column, unknown names and wrong argument counts, fields or enum values the data model does not have (with the closest real ones), type errors, and deprecated constructs with Forward's own advice. Its type check is gradual: where it cannot tell a type it says nothing, so a clean result is not proof, but an error it reports is one Forward reports.
+3a. Before running anything, check it offline: `fwdctl nqe lint query.nqe` (no Forward connection, milliseconds). It reports syntax errors with line and column, unknown names and wrong argument counts, fields or enum values the data model does not have (with the closest real ones), type errors, and deprecated constructs with Forward's own advice. Its type check is gradual: where it cannot tell a type it says nothing, so a clean result is not proof, but an error it reports is one Forward reports. The data model, standard library and Forward's own built-in query library (`@fwd/...` imports) are fully checked offline. **An import of your own organization's saved query is not**: lint warns ("not in Forward's built-in library... fwdctl nqe bundle resolves it") instead of guessing, because that library is per-organization and changes with every commit, unlike the sealed `@fwd/...` signatures. If the warning appears, run `fwdctl nqe bundle --path <entry>` first (it fetches the real source of every module you import, live, and inlines it) and lint the bundle instead for the same full coverage you get on Forward's own library.
 4. Run `validate-nqe-query`. A compile error is a deterministic finding with a position: fix exactly what
    it names and run it again. Do not guess a second change.
 5. Zero rows is **unknown**, not "compliant". Decide whether the filter or the network explains it before
@@ -47,4 +47,17 @@ Read the file you need, when you need it. The cheat sheet, the rules and the syn
 - [reference/synthetic-devices.md](reference/synthetic-devices.md): the row types of a query that defines a synthetic device's connections (internet node, intranet node, L3 VPN, adjacent network, L2 VPN), the starter templates (`fwdctl nqe template <kind>`), the row check (`fwdctl nqe lint --synthetic <kind>`) and the mistakes Forward only reports after attach. Read when asked to build a synthetic device from a query.
 - [reference/config-patterns.md](reference/config-patterns.md): what the model does not hold (BGP policy per neighbor, configured static routes) and the block patterns that read it from configuration text, with the reasons a pattern returns nothing or will not compile. Read when the answer is in `device.files.config`.
 - `reference/syntax-and-types.md` (served by `fwdctl describe`): type keywords, single-line versus block patterns, parenthesising a comprehension used as a value, `order by` and `limit`, and typed time arithmetic. Read when the query sorts, limits, does time arithmetic or matches patterns, or when a diagnostic mentions a type.
+- `reference/std-lib.md` (served by `fwdctl describe`): every built-in function and constant, one entry each, generated from Forward's own documentation. Read when `fwdctl context schema` or a diagnostic names a function you have not used before.
+
+### Language guides
+
+Forward's own long-form language documentation, one topic per file, generated from Forward's docs and served by `fwdctl describe author-nqe-query reference/<name>.md`. The cheat sheet and rules above are the short version; read a guide when a diagnostic, a type or a construct needs more than a line of explanation.
+
+Values and types: `reference/guide-booleans.md`, `reference/guide-numbers.md`, `reference/guide-strings.md`, `reference/guide-nqe-types.md`, `reference/guide-records.md`, `reference/guide-sets.md`, `reference/guide-collections.md` (Bag vs List, and the 25.11 typing change), `reference/guide-oneofs-enumerations.md`, `reference/guide-missing-values.md`, `reference/guide-expressions-types.md`, `reference/guide-top-level-expression.md`.
+
+Writing queries: `reference/guide-comprehensions.md` (the full walkthrough: qualifiers, `order by`, `limit`, nested comprehensions), `reference/guide-if-expressions.md`, `reference/guide-comparisons.md`, `reference/guide-parameterized-queries.md`, `reference/guide-user-defined-constant-functions.md`, `reference/guide-imports.md`, `reference/guide-primary-keys.md`.
+
+Data and matching: `reference/guide-block-patterns.md`, `reference/guide-regexes.md`, `reference/guide-json.md`, `reference/guide-csv.md`, `reference/guide-data-extraction.md` (pattern matching against collected configuration).
+
+Network-specific types: `reference/guide-ip-addresses.md`, `reference/guide-ip-subnets.md`, `reference/guide-mac-addresses.md`, `reference/guide-device-groups.md`, `reference/guide-snapshot-data.md`, `reference/guide-time.md`.
 
