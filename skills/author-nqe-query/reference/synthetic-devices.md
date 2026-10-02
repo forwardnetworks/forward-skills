@@ -25,8 +25,13 @@ For an internet node specifically (a connection is where your network hands traf
 | L2 VPN | `L2VpnConnection` | `edgeInterface` | `vlan`, `connectionName` |
 
 An interface is `{deviceName: String, interfaceName: String}`. `subnetDiscoveryMethod` is one of `SubnetDiscoveryMethod.none`, `.ipRoutes({advertisesDefaultRoute: Bool})`,
-`.bgpRoutes({peerIps: List<IpAddress>})` or `.interfaceAddresses`. `subnets` is a `List<IpSubnet>` and `backdoorInterfaces` a `List<IfaceReference>`; an empty list is written
+`.bgpRoutes(...)` or `.interfaceAddresses`. `subnets` is a `List<IpSubnet>` and `backdoorInterfaces` a `List<IfaceReference>`; an empty list is written
 `foreach x in fromTo(1, 0) select null : IpSubnet`. The query ends in `@query name : List<RowType> = ...`.
+
+`bgpRoutes`'s argument is `BgpRoutesSourceAttributes` (`{peerIps: List<IpAddress>}`), a **nominal** record type: a bare `{peerIps: [...]}` literal passed directly type-checks under
+`fwdctl nqe lint`'s gradual offline check but is rejected by Forward ("Argument type has type {peerIps: List<IpAddress>}, but expected BgpRoutesSourceAttributes"). Give the literal
+its nominal type through a function's declared return type instead: `bgpRoutesSource(peerIps: List<IpAddress>) : BgpRoutesSourceAttributes = { peerIps: peerIps };`, then call
+`SubnetDiscoveryMethod.bgpRoutes(bgpRoutesSource([...]))`. `fwdctl nqe synthesize internet --discovery bgpRoutes` already emits this form.
 
 ## Mistakes the type check misses
 
