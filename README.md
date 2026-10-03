@@ -54,7 +54,7 @@ Every skill returns the same envelope (`status` ok / failed / unknown / error, `
 - **Path analysis and troubleshooting:** `plan-troubleshoot-connectivity`, `plan-incident-triage`, `plan-what-changed`, `plan-synthetic-device`, `plan-snapshot-recovery`, `plan-link-overrides`, `investigate-reachability`, `inspect-topology`, `inspect-history`, `compare-device-config`, `inspect-device-files`, `investigate-collection-failure`
 - **Security:** `plan-security-posture`, `plan-vulnerability-response`, `plan-segmentation-check`, `inspect-vulnerabilities`, `check-network-compliance`, `investigate-reachability`
 - **Change:** `plan-change-review`, `plan-maintenance-window`, `verify-change`, `edit-change-set`
-- **Audit and compliance:** `plan-compliance-audit`, `plan-device-audit`, `check-network-compliance`, `inspect-inventory`, `edit-checks`
+- **Audit and compliance:** `plan-compliance-audit`, `plan-device-audit`, `check-network-compliance`, `inspect-inventory`, `edit-checks`, `edit-alias`
 - **Health and collection:** `plan-health-check`, `inspect-snapshots`, `inspect-collection`, `inspect-performance`, `inspect-environment`, `inspect-access`, `edit-access`, `edit-collection`, `edit-endpoint-profile`, `edit-workspace`, `edit-org-property`, `edit-data-file`, `edit-data-connector`, `edit-snapshot-reprocess`, `edit-advanced-reachability`, `edit-snapshot-note`
 - **Inventory and topology:** `inspect-networks`, `inspect-inventory`, `inspect-topology`, `edit-device-tags`, `inspect-edge`, `inspect-bgp-neighbors`, `edit-internet-exclusions`, `edit-wan-circuit`, `edit-synthetic-query`, `edit-link-overrides`
 - **NQE (custom questions):** `find-nqe-query`, `author-nqe-query`, `validate-nqe-query`, `compare-nqe-results`, `edit-nqe-query`
