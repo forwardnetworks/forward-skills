@@ -58,7 +58,7 @@ Every skill returns the same envelope (`status` ok / failed / unknown / error, `
 - **Health and collection:** `plan-incident-triage`, `inspect-snapshots`, `inspect-collection`, `inspect-performance`, `inspect-environment`, `inspect-access`, `inspect-platform`, `edit-access`, `edit-collection`, `edit-snapshot`, `edit-endpoint-profile`, `edit-workspace`, `edit-org-property`, `edit-data-file`, `edit-data-connector`, `edit-snapshot-reprocess`, `edit-advanced-reachability`, `edit-snapshot-note`
 - **Inventory and topology:** `inspect-networks`, `inspect-inventory`, `inspect-topology`, `edit-device-tags`, `inspect-edge`, `inspect-bgp-neighbors`, `edit-internet-exclusions`, `edit-wan-circuit`, `edit-synthetic-query`, `edit-link-overrides`
 - **NQE (custom questions):** `find-nqe-query`, `author-nqe-query`, `validate-nqe-query`, `compare-nqe-results`, `edit-nqe-query`
-- **Router and protocol:** `plan-investigation`, `plan-safe-write`, `plan-report-skill-gap` <!-- DOGFOOD-TEMP -->
+- **Router and protocol:** `plan-investigation`, `plan-safe-write`
 
 ## More
 
