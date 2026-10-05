@@ -1,7 +1,7 @@
 {
   "name": "forward-skills",
   "interface": {
-    "displayName": "Forward Skills"
+    "displayName": "Forward Skills (experimental)"
   },
   "plugins": [
     {

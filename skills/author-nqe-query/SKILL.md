@@ -60,4 +60,4 @@ Writing queries: `reference/guide-comprehensions.md` (the full walkthrough: qual
 Data and matching: `reference/guide-block-patterns.md`, `reference/guide-regexes.md`, `reference/guide-json.md`, `reference/guide-csv.md`, `reference/guide-data-extraction.md` (pattern matching against collected configuration).
 
 Network-specific types: `reference/guide-ip-addresses.md`, `reference/guide-ip-subnets.md`, `reference/guide-mac-addresses.md`, `reference/guide-device-groups.md`, `reference/guide-snapshot-data.md`, `reference/guide-time.md`.
-
+- [reference/gotchas.md](reference/gotchas.md): speed, silent short results, positive-content assertions, missing values, time, and model facts that trip queries (each marked verified or unverified). Read when a query is slow, short or errors.
