@@ -1,5 +1,10 @@
 # Queries that define a synthetic device's connections
 
+## Contents
+- The row type of each kind
+- Mistakes the type check misses
+- Preview before attaching
+
 What each synthetic device is for, how to choose one and what a connection means: `fwdctl describe plan-synthetic-device reference/types.md` (and `connections.md`).
 
 Forward can build the connections of a synthetic device (the internet node, an intranet node, an L3 VPN, an adjacent network or an L2 VPN) from a saved NQE query instead of
