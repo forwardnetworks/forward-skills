@@ -1,6 +1,6 @@
 {
   "name": "forward-skills",
-  "version": "0.5.91",
+  "version": "0.5.92",
   "description": "Experimental, not an official Forward Networks release. Evidence-returning network skills over Forward Networks. Needs the fwdctl binary on PATH.",
   "author": {
     "name": "Forward Networks"
