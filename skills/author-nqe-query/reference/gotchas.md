@@ -1,6 +1,6 @@
 # NQE gotchas: speed, silent wrong answers, missing values
 
-Read when a query is slow, returns fewer rows than expected, or fails on a missing value. Each item says how it was checked. **Verified** means against this repository's NQE schema or builtins; **unverified** means a colleague measured it on one network, so confirm it with `validate-nqe-query` (or `fwdctl nqe run`) before stating it as fact.
+Read when a query is slow, returns fewer rows than expected, or fails on a missing value. Each item says how it was checked (live = run against a real network on 2026-10-06). **Verified** means against this repository's NQE schema or builtins; **unverified** means a colleague measured it on one network, so confirm it with `validate-nqe-query` (or `fwdctl nqe run`) before stating it as fact.
 
 ## Contents
 
@@ -30,19 +30,26 @@ A device that does not have a feature often answers a command with a banner, an 
 
 ## Missing values
 
-**Unverified** (check each error message on a live run): operations on a missing value stop the whole query instead of yielding nothing, including a `foreach` over it, `length(x)`, a duration built from it and a field access on it. Guard with `isPresent` (a builtin) in a `where` before the use; compare with `x == false` rather than negating a possibly missing boolean. See `fwdctl describe author-nqe-query reference/syntax-and-types.md` for the language's own handling.
+**Verified** on a live network (`validate-nqe-query`, 124 devices): selecting a field from a value that can be missing does not fail at run time, it fails to **compile**, and the message names the fix: "Cannot select field 'x' from null value. Consider either replacing '.' with '?.' to return null or using isPresent() to check whether the value is present before selecting a field". So:
+- `d.platform.osSupport.lastSupportDate` does not compile (79 of 124 devices have `osSupport`); `d.platform.osSupport?.lastSupportDate` runs and gives null for the other 45; `where isPresent(d.platform.osSupport)` keeps only the 79.
+- `?.` does **not** help a `foreach`: `foreach nb in p.bgp?.neighbors` fails with "foreach was given a null list". Guard with `where isPresent(p.bgp)` before the `foreach` (that returned the network's 692 BGP neighbours).
+- `length(x.y.z)` on a missing record fails the same way as any field access; guard first.
+
+**Unverified:** negating a possibly missing boolean (`!x`) versus `x == false`: both ran without error on a boolean that was always present, so the difference was not seen; prefer `x == false` when the value can be missing. See `fwdctl describe author-nqe-query reference/syntax-and-types.md` for the language's own handling.
 
 ## Time
 
-**Verified** (the time guide and schema): there is no "now" value. Use the snapshot's own time (`snapshotInfo` holds `collectionTime`) or a date parameter, because results are cached per snapshot. A subtraction of two timestamps is a `Duration`; compare it to `days(30)`, `seconds(n)` and the like.
+**Verified** (the time guide, the schema and a live run, where `now()` is "not in scope"): there is no "now" value. Use the snapshot's own time (`snapshotInfo` holds `collectionTime`) or a date parameter, because results are cached per snapshot. A subtraction of two timestamps is a `Duration`; compare it to `days(30)`, `seconds(n)` and the like.
 
 ## Model facts that trip queries
 
 **Verified** against `nqeschema/network.json`:
 - `BgpNeighbor` has no local-address or update-source field (`localAddress` and `updateSource` fail). It holds `neighborAddress`, `peerDeviceName`, `peerVrf`, `peerRouterId`, `sessionState`, `enabled`, `description`, `peerAS`, `localAS`, `peerType` and `statistics`. The update source is in the configuration text (`reference/config-patterns.md`).
 - Interface names are vendor-shortened and `aliases` casing differs by vendor: compare with `toLowerCase`.
-- `osSupport` can be missing for lab images, so guard it.
+- `osSupport` is missing on some devices (verified: 45 of 124 on one network), so guard it as above.
 - Traffic-engineering tunnels (`teTunnel`) carry their label stacks (`mplsLabels`, `pushedMplsLabels`), which is where a segment-routing node SID can be read.
 - A protocol the model does not cover can still show up as `originProtocol` on a next hop: enumerate across every device before saying a protocol is absent.
 
-**Unverified:** high-availability pair members can share addresses, so match by address, not by name; `peerRouterId` can be `0.0.0.0` when no OPEN was received; `peerVrf` is missing when `peerDeviceName` does not resolve.
+**Verified live** (one network, 692 BGP neighbours): `peerRouterId` is `0.0.0.0` on neighbours that are IDLE or ACTIVE (no OPEN received), and `peerVrf` is missing when `peerDeviceName` is missing (171 neighbours). `sessionState` was never missing there, so whether it can be is unverified.
+
+**Unverified:** high-availability pair members can share addresses, so match by address, not by name.
