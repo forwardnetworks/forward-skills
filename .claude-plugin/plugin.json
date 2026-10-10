@@ -1,6 +1,6 @@
 {
   "name": "forward-skills",
   "description": "Experimental, not an official Forward Networks release. Evidence-returning network skills over Forward Networks. Needs the fwdctl binary on PATH.",
-  "version": "0.5.96",
+  "version": "0.5.97",
   "lspServers": "./.lsp.json"
 }
