@@ -67,3 +67,7 @@ A device that does not have a feature often answers a command with a banner, an 
 ## `.` on an optional record fails at run time, `?.` returns null
 
 `fwdctl nqe lint` calls `d.platform.osSupport.lastSupportDate` valid, but Forward fails it with "Cannot select field ... from null value" on any device without an `osSupport` record. Use `d.platform.osSupport?.lastSupportDate` (null when absent) or guard with `isPresent(d.platform.osSupport)`. Verified live on a 1,409-device network where 702 devices have no lifecycle record.
+
+## Large networks
+
+Filter to one vendor or device group before iterating nested lists, select scalar fields rather than whole records, and page the result. The reasons, measured effects, the device-parallel shape and how to time a query are in `reference/performance.md`. `unexpected EOF` on `POST /api/nqe` has been reported on a huge snapshot with whole records selected; narrow the query. `fwdctl context schema "<field>"` lists the fields inside a record one level down (`contains`).
