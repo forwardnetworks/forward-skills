@@ -36,6 +36,7 @@ That is typically 10 to 100 times faster. The Query Debug Panel in the NQE Libra
 - A very large **inline** query is analysed again on every run. Save it to the NQE library and run it **by id** (`fwdctl nqe run --query-id`).
 - A `TIMED_OUT` or `SYSTEM_ERROR` result is cached: an identical retry fails immediately (`--meta` says "cached failure"); change or narrow the query first, or add `--fresh` to make the program different without changing the rows.
 - `unexpected EOF` on `POST /api/nqe` was reported once on a huge snapshot with whole records selected (cause not established): narrow the query.
+- **A job that needs every row of a large network** should not first learn the result is too big: ask for one page (`--limit 1 --meta m.json`; the page line and `estimated_total_bytes` give the total rows and the size as text), and over 100 MB pass `--allow-large` with output to a temp file, then hash or aggregate as it streams, or page with `--limit/--offset`. Without `--allow-large` the guard refuses only after the query has run, and the work is lost.
 - Parallel requests share a fixed set of workers; four at once gave about 2x, not 4x.
 
 ## 6. Measure
