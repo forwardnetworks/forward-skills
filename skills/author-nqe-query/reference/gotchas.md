@@ -59,3 +59,11 @@ A device that does not have a feature often answers a command with a banner, an 
 **Verified live** (one network, 692 BGP neighbours): `peerRouterId` is `0.0.0.0` on neighbours that are IDLE or ACTIVE (no OPEN received), and `peerVrf` is missing when `peerDeviceName` is missing (171 neighbours). `sessionState` was never missing there, so whether it can be is unverified.
 
 **Unverified:** high-availability pair members can share addresses, so match by address, not by name.
+
+## group-by takes one key
+
+`group x as g by KEY as name` has exactly one key expression. `by a, b` is a syntax error (`fwdctl nqe lint` says so and hints), and a peer reported the same compile error from Forward for a tuple or record key. For several values, make one key of them (for example an interpolated string that joins them) and split it again in the `select`, or group in two steps (group by the first, then group each group by the second).
+
+## `.` on an optional record fails at run time, `?.` returns null
+
+`fwdctl nqe lint` calls `d.platform.osSupport.lastSupportDate` valid, but Forward fails it with "Cannot select field ... from null value" on any device without an `osSupport` record. Use `d.platform.osSupport?.lastSupportDate` (null when absent) or guard with `isPresent(d.platform.osSupport)`. Verified live on a 1,409-device network where 702 devices have no lifecycle record.
