@@ -37,6 +37,7 @@ That is typically 10 to 100 times faster **for a query over many devices**. For 
 - A `TIMED_OUT` or `SYSTEM_ERROR` result is cached: an identical retry fails immediately (`--meta` says "cached failure"); change or narrow the query first, or add `--fresh` to make the program different without changing the rows.
 - `unexpected EOF` on `POST /api/nqe` was reported once on a huge snapshot with whole records selected (cause not established): narrow the query.
 - **A job that needs every row of a large network** should not first learn the result is too big: ask for one page (`--limit 1 --meta m.json`; the page line and `estimated_total_bytes` give the total rows and the size as text), and over 100 MB pass `--allow-large` with output to a temp file, then hash or aggregate as it streams, or page with `--limit/--offset`. Without `--allow-large` the guard refuses only after the query has run, and the work is lost.
+- **Paged reads can mislead.** Forward documents no row order for offset/limit pages, and a sort on a column with ties is not stable, so two pages can overlap or miss rows while the total stays the same. A run reads one execution's result, which is stable; a `--sync` run pages afresh each time, so for a whole-result read prefer the default (asynchronous) run, or page on a unique key column and check the pages join (the total and a count of distinct keys).
 - Parallel requests share a fixed set of workers; four at once gave about 2x, not 4x.
 
 ## 6. Measure
