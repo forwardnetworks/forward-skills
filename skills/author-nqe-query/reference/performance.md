@@ -9,7 +9,7 @@ NQE runs one task per device, in parallel, when the **main comprehension starts 
 - `network.devices` is named **once**;
 - the main comprehension has **no `group`** (group inside a per-device `let`, or aggregate in a second query).
 
-That is typically 10 to 100 times faster. The Query Debug Panel in the NQE Library (option-click Execute) shows the optimized plan: a device-parallel query starts `parallel_foreach`.
+That is typically 10 to 100 times faster **for a query over many devices**. For a request that selects one device (or a few) and does heavy work per device, look the device up by exact name instead: `foreach d in names foreach device in network.devices where device.name == d` is a keyed lookup and was measured faster (30.6 s down to 12.1 s on a large network) than the device-parallel path with a computed filter. The Query Debug Panel in the NQE Library (option-click Execute) shows the optimized plan: a device-parallel query starts `parallel_foreach`.
 
 ## 2. Help the optimizer
 
