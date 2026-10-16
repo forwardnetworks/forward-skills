@@ -47,6 +47,8 @@ That is typically 10 to 100 times faster **for a query over many devices**. For 
 
 ## 6. Measure
 
+- **Comparing a rewrite with the original**: `fwdctl nqe compare --network N --snapshot S --a old.nqe --b new.nqe --key COL,COL --params p.json` runs both versions on the same snapshot (cold, alternating order with `--rounds 2`) and reports whether the rows are identical, the rows added/removed/changed by key, the column and type shape, the differences that remain when array order is ignored (`--ignore-array-order`) and each run's timing. Exit 0 identical, 1 differs: use it as the release gate for a rewrite. Use `nqe diff` for the other direction (one query on two snapshots).
+
 - `fwdctl nqe explain --query-id Q_... ` prints Forward's own optimized plan for a saved query (the Query Debug Panel's text: `parallel_foreach`, `_lookup`, totality and cardinality marks). `fwdctl nqe metrics` lists the slow runs Forward recorded (needs its DEBUG_NQE permission).
 - `fwdctl nqe run --meta FILE` (runs are asynchronous by default) records Forward's execution time (`millis_executing`: not parse, optimize or queue time), the outcome and whether the result was cached. A synchronous run only gives your own wall-clock time.
 - A result is cached on (optimized program, snapshot, parameters): for a cold timing change the query (an always-true `where "<unique>" != ""` works; comments do not), and compare versions one at a time.
