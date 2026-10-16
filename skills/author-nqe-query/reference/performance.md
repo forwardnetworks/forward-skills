@@ -25,6 +25,10 @@ That is typically 10 to 100 times faster **for a query over many devices**. For 
 - Do not repeat the same call in both arms of an `if`; compute it once.
 - Prefer the **native model** (for example `securityPolicy`) to parsing configuration text. *Measured:* roughly 2x.
 
+*Per-row work that does not depend on the row* (measured on a firewall-policy query, rows byte-identical): an exported row producer called inside `foreach name in <list parameter>` that builds a tree from a device-level collection rebuilds the shared subtrees for every name (1,067 s down to 101 s when each distinct root was built once, before the name loop, and looked up by key); a `let` that reads only the device, placed after a `foreach` over rules, is computed again per rule (bind it right after the device loop). `fwdctl nqe lint` reports both as info: `perf-repeated-tree-per-row`, `perf-device-value-in-row-loop`.
+
+*To see what Forward did with a query text*, `fwdctl nqe explain --file q.nqe --apply` saves the text as a throwaway draft in your workspace, prints Forward's plan and discards the draft (the path is named; without `--apply` it only says what it would do).
+
 ## 4. Text and regex
 
 *Measured:* `regexMatches` or `substring` called directly on a collected command's response costs per match, not per scan, and was 10 to 700 times slower than on a copy. **Copy the string first**: `let text = "" + command.response`. `fwdctl nqe lint --experimental perf-command-response` flags it.
