@@ -1,11 +1,18 @@
 {
   "name": "forward-skills",
-  "owner": { "name": "Forward Networks" },
+  "owner": {
+    "name": "Forward Networks"
+  },
   "plugins": [
     {
       "name": "forward-skills",
       "source": ".",
       "description": "Experimental, not an official Forward Networks release. Evidence-returning network skills over Forward Networks: reachability, change verification, compliance, vulnerabilities, inventory, device configs and NQE."
+    },
+    {
+      "name": "forward-mcp",
+      "source": "./plugins/forward-mcp",
+      "description": "Unofficial guidance for using Forward Networks' official MCP server (read-only digital twin questions). Not an official Forward document."
     }
   ]
 }

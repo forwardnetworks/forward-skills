@@ -30,6 +30,13 @@ codex plugin marketplace add forwardnetworks/forward-skills && codex plugin add 
 gemini skills install https://github.com/forwardnetworks/forward-skills --path skills --scope user
 ```
 
+
+If your agent connects to Forward's official MCP server (`<host>/api/mcp`) and does not run `fwdctl`, install the separate guidance plugin instead (unofficial, not a Forward document, nothing to build):
+
+```bash
+claude plugin marketplace add forwardnetworks/forward-skills && claude plugin install forward-mcp@forward-skills
+codex plugin marketplace add forwardnetworks/forward-skills && codex plugin add forward-mcp@forward-skills
+```
 Restart the agent after installing, then open a session anywhere and ask. **NQE language server** (diagnostics, hover, completion on `.nqe` files in Claude Code): the Claude Code plugin has it already;
 for the server alone, other editors and how to check it, see [docs/install.md](docs/install.md). It is optional: the skills lint and run NQE without it.
 

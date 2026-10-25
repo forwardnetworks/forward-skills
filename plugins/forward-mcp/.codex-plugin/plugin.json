@@ -1,0 +1,29 @@
+{
+  "name": "forward-mcp",
+  "version": "0.5.213",
+  "description": "Unofficial guidance for an agent connected to Forward Networks' official MCP server (read-only questions about the digital twin). Not an official Forward document; needs no extra software.",
+  "author": {
+    "name": "Forward Networks"
+  },
+  "homepage": "https://github.com/forwardnetworks/forward-skills",
+  "repository": "https://github.com/forwardnetworks/forward-skills",
+  "license": "Proprietary",
+  "keywords": [
+    "forward networks",
+    "mcp",
+    "digital twin"
+  ],
+  "interface": {
+    "displayName": "Forward MCP (unofficial guidance)",
+    "shortDescription": "Use Forward's official MCP server well",
+    "longDescription": "How to ask Forward's official MCP server read-only questions about the network model: paths, devices, VLANs, VRFs, hosts, CVE exposure and NQE, with the working rules, the argument names and the errors to expect. Unofficial; not a Forward document.",
+    "developerName": "Forward Networks",
+    "category": "Engineering",
+    "capabilities": [
+      "Read"
+    ],
+    "defaultPrompt": [
+      "Use Forward's MCP to check whether 10.0.0.1 can reach 10.0.0.2 on tcp/443 in network <id>."
+    ]
+  }
+}
