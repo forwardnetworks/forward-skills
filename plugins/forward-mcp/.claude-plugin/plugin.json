@@ -1,7 +1,7 @@
 {
   "name": "forward-mcp",
   "description": "Unofficial guidance for an agent connected to Forward Networks' official MCP server (read-only questions about the digital twin). Not an official Forward document; needs no extra software.",
-  "version": "0.5.216",
+  "version": "0.5.217",
   "author": {
     "name": "Forward Networks"
   }
