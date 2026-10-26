@@ -5,6 +5,7 @@ configured static routes, or any block-pattern query that returns nothing.
 
 ## Contents
 
+- SD-WAN: a pass/fail check that a prefix uses a given next hop (forwarding table, not command text)
 - What the model does not hold
 - Block patterns that were run (BGP policy by vendor, measured forms)
 - Worked example: every NX-OS BGP route-map form, unioned
@@ -12,6 +13,42 @@ configured static routes, or any block-pattern query that returns nothing.
 - Configured static routes (starting patterns)
 - Endpoints: which profile asks for what, and which product it is
 - What did an endpoint's profile collect? (alias summary and the entries)
+
+## SD-WAN: a pass/fail check that a prefix uses a given next hop
+
+**What NQE models and what it does not.** The forwarding table (`networkInstances.afts.ipv4Unicast.ipEntries`, per VRF) holds the SD-WAN routes. OMP route attributes (TLOC system IP, color, preference, from-peer) are not modeled: `fwdctl context schema` for `omp`, `tloc`, `overlay` and `sdwan` finds no OMP table (the schema in this binary, not a particular Forward build). A request for them is a request to extend Forward's NQE data model; whether and where to file it is the person's call, not a skill's. The OMP text a collection gathers is in `device.outputs.commands` (commandType `SDWAN_OMP_ROUTES`), but a regex over it has three faults: it reads collected text, so a prediction is not expected to change it (untested); it returns zero rows when the file is missing, which is neither pass nor fail; and it breaks when the collection source of the file changes (edge versus vSmart-derived).
+
+**What a field session saw on one Viptela vEdge** (a collected snapshot; not confirmed on other platforms or releases): the SD-WAN routes are forwarding entries whose next hops have `nextHopType` ATTACHED and an interface named `ipsec_<local>_<remote transport IP>_<port>_<port>`; `originProtocol` is UNKNOWN and `ipAddress` is null, so the TLOC system IP is not in the table. A check can therefore test the REMOTE TRANSPORT IP (a string match on the interface name), never the TLOC system IP. The query below matches the pattern `*_<remote>/32_*`, so on that snapshot the remote address appeared as `<address>/32` in the name; check the form on your own snapshot before relying on it.
+
+**The check** (parameterized, all Strings; run it with `fwdctl nqe run --network ID --file F --param 'vrf="10"' ...`; the values are JSON, so a numeric-looking VRF must be quoted). It passes if any next hop of the prefix is an IPsec interface to the expected remote transport IP. A prefix with no entry is a `FAIL: no entry` row with an empty tunnel list, never an empty result. Written by a field session and run by it on a collected snapshot of a real vEdge (PASS for a matching IP, `FAIL: wrong next hop` for a mismatch, `FAIL: no entry` for a missing prefix); lint-valid here; not run on a Predict snapshot.
+
+    // device "branch-edge-1", vrf "10", prefix "10.1.2.0/24", expectedRemote "203.0.113.16"
+    @query
+    checkSdwanNextHop(device : String, vrf : String, prefix : String, expectedRemote : String) =
+      foreach d in network.devices
+      where d.name == device
+      let tunnels = (
+        foreach ni in d.networkInstances
+        where ni.name == vrf
+        foreach e in ni.afts.ipv4Unicast.ipEntries
+        where toString(e.prefix) == prefix
+        foreach h in e.nextHops
+        select h.interfaceName)
+      let hits = (
+        foreach t in tunnels
+        where matches(t, "*_" + expectedRemote + "/32_*")
+        select t)
+      let status =
+        if length(tunnels) == 0 then withInfoStatus("FAIL: no entry", InfoStatus.ERROR)
+        else if length(hits) > 0 then withInfoStatus("PASS", InfoStatus.OK)
+        else withInfoStatus("FAIL: wrong next hop", InfoStatus.ERROR)
+      select {
+        violation: length(hits) == 0,
+        Device: d.name, VRF: vrf, Prefix: prefix, "Expected remote": expectedRemote,
+        "Next-hop tunnels": tunnels, Status: status
+      };
+
+Notes: a comprehension used as a value (`let x = (foreach ...)`) must be parenthesized. "Any next hop matches" passes ECMP when one path is right; for all paths, require `length(hits) == length(tunnels)`. Whether a prediction changes these entries is not established: one session saw a BGP withdraw change SD-WAN forwarding entries and an OMP route injection not change them (a single report, not repeated).
 
 ## What the model does not hold
 
