@@ -48,7 +48,7 @@ configured static routes, or any block-pattern query that returns nothing.
         "Next-hop tunnels": tunnels, Status: status
       };
 
-Notes: a comprehension used as a value (`let x = (foreach ...)`) must be parenthesized. "Any next hop matches" passes ECMP when one path is right; for all paths, require `length(hits) == length(tunnels)`. Whether a prediction changes these entries is not established: one session saw a BGP withdraw change SD-WAN forwarding entries and an OMP route injection not change them (a single report, not repeated).
+Notes: a list of next hops (or interfaces, tags) comes back in no fixed order, so when forwarding entries are compared between two snapshots (`fwdctl nqe diff`, `compare-nqe-results`) order the hops inside each row first: otherwise the same entry in a different order counts as changed (a field session saw about 15,000 false differences on forwarding entries; `nqe compare` has `--ignore-array-order`, `nqe diff` does not). A comprehension used as a value (`let x = (foreach ...)`) must be parenthesized. "Any next hop matches" passes ECMP when one path is right; for all paths, require `length(hits) == length(tunnels)`. Whether a prediction changes these entries is not established: one session saw a BGP withdraw change SD-WAN forwarding entries and an OMP route injection not change them (a single report, not repeated).
 
 ## What the model does not hold
 
