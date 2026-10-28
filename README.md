@@ -7,7 +7,7 @@ Forward is the data source here, read almost entirely; the few skills that write
 ```text
 Agent / harness   -> orchestration, memory, governance, approval, the model
 Forward Skills    -> investigate-reachability, verify-change, ...
-fwd               -> thin layer over forward-go-sdk (operation log, snapshot guards, bounded results)
+fwdctl            -> the CLI the skills run through: a thin layer over forward-go-sdk (operation log, snapshot guards, bounded results)
 Forward platform  -> the digital twin
 ```
 
@@ -16,7 +16,7 @@ Forward platform  -> the digital twin
 ```bash
 brew install forwardnetworks/tap/fwdctl        # the fwdctl binary (macOS, Linux); or, anywhere:
 curl -fsSL https://raw.githubusercontent.com/forwardnetworks/fwdctl/main/install.sh | sh   # more: github.com/forwardnetworks/fwdctl
-fwdctl login --file ~/forward.token      # once: remember the login (file format below)
+fwdctl login --file ~/forward.netrc      # once: remember the login (file format below)
 ```
 
 Then give your agent the skills (pick one):
@@ -40,17 +40,15 @@ codex plugin marketplace add forwardnetworks/forward-skills && codex plugin add 
 Restart the agent after installing, then open a session anywhere and ask. **NQE language server** (diagnostics, hover, completion on `.nqe` files in Claude Code): the Claude Code plugin has it already;
 for the server alone, other editors and how to check it, see [docs/install.md](docs/install.md). It is optional: the skills lint and run NQE without it.
 
-The login file has three lines: the Forward URL, the username (or an API token's access key) and the password (or its secret). Keep it private (`chmod 600`):
+The login file is in netrc format: the Forward host, the username (or an API token's access key) and the password (or its secret). Keep it private (`chmod 600`):
 
 ```text
-https://fwd.app
-<access key or username>
-<secret or password>
+machine fwd.app
+login <access key or username>
+password <secret or password>
 ```
 
-`fwdctl login` checks the login and remembers only the path of the file (the password is never copied); `fwdctl login --forget` removes it. Flags and the `FORWARD_*` variables still win. More in [docs/install.md](docs/install.md).
-
-Then ask in plain words: *"Why can't 10.1.1.5 reach the database on 5432?"*, *"Give me a security review"*, *"Is CVE-2024-3400 relevant to us?"*. The agent reads the router (`plan-investigation`), follows the playbook it names, and says what it measured and what it did not.
+The file is netrc and nothing else: the three keywords can sit on one line (`machine fwd.app login KEY password SECRET`) or three, and the machine may be a bare host or a full URL (`https://fwd.app`, or your own Forward server). It must be mode 600; fwdctl refuses a file others can read. Then ask in plain words: *"Why can't 10.1.1.5 reach the database on 5432?"*, *"Give me a security review"*, *"Is CVE-2024-3400 relevant to us?"*. The agent reads the router (`plan-investigation`), follows the playbook it names, and says what it measured and what it did not.
 Changes in Forward are dry runs until you approve a plan; devices are never reconfigured.
 
 ## Skills
