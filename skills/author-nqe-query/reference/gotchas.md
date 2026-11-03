@@ -71,3 +71,4 @@ A device that does not have a feature often answers a command with a banner, an 
 ## Large networks
 
 Filter to one vendor or device group before iterating nested lists, select scalar fields rather than whole records, and page the result. The reasons, measured effects, the device-parallel shape and how to time a query are in `reference/performance.md`. `unexpected EOF` on `POST /api/nqe` has been reported on a huge snapshot with whole records selected; narrow the query. `fwdctl context schema "<field>"` lists the fields inside a record one level down (`contains`).
+- Never guess an enum value (`IfaceType.IF_MANAGEMENT_ETHERNET` does not exist): `fwdctl context schema <word>` lists the real values that match under `enum_values`, and `fwdctl nqe lint` names the closest real one when a guess is wrong.
