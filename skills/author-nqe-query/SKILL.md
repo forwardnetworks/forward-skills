@@ -66,3 +66,4 @@ Data and matching: `reference/guide-block-patterns.md`, `reference/guide-regexes
 
 Network-specific types: `reference/guide-ip-addresses.md`, `reference/guide-ip-subnets.md`, `reference/guide-mac-addresses.md`, `reference/guide-device-groups.md`, `reference/guide-snapshot-data.md`, `reference/guide-time.md`.
 - [reference/gotchas.md](reference/gotchas.md): speed, silent short results, positive-content assertions, missing values, time, and model facts that trip queries (each marked verified or unverified). Read when a query is slow, short or errors.
+- [reference/decorators.md](reference/decorators.md): NQE decorators (device, host, interface and path): the join columns and their types, and how a decorator query differs from a check.
