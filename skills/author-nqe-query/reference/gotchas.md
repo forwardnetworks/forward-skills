@@ -8,6 +8,7 @@ Read when a query is slow, returns fewer rows than expected, or fails on a missi
 - A query that returns too little and says nothing
 - Assert on positive content
 - Missing values
+- Reading a union value (a OneOf such as VlanIdOrRange)
 - Time
 - Model facts that trip queries
 
@@ -42,6 +43,82 @@ A device that does not have a feature often answers a command with a banner, an 
 - `length(x.y.z)` on a missing record fails the same way as any field access; guard first.
 
 **Unverified:** negating a possibly missing boolean (`!x`) versus `x == false`: both ran without error on a boolean that was always present, so the difference was not seen; prefer `x == false` when the value can be missing. See `fwdctl describe author-nqe-query reference/syntax-and-types.md` for the language's own handling.
+
+## Reading a union value (a OneOf such as VlanIdOrRange)
+
+A field whose type is a union (the schema shows a OneOf with named alternatives: `VlanIdOrRange` is `ID` (an Integer) or `RANGE` (a record with `from` and `to`), `server.host` is `ip` or `fqdn`) cannot be read with `.`. `entry.ID` fails to compile with "Can't access field 'ID' from 'entry', because that is a VlanIdOrRange". Read it with **one** `when ... is`: the alternatives are separated by `;` (not a second `when`, not a comma, not `then`), a case with a payload is `NAME(binder) -> expression`, a case without one is `NAME -> expression`, and `otherwise -> expression` is the default. Every case must give the same type. Checked live against Forward 26.11.0-14 and offline with `fwdctl nqe lint` (they agree on every form here).
+
+As a function (Forward's own library reads it this way; a `;` after the last alternative is fine here):
+
+    // reads a union
+    vlanIds(entry) =
+      when entry is
+        ID(id) -> [id];
+        RANGE(range) -> fromTo(range.from, range.to);
+
+    foreach device in network.devices
+    foreach interface in device.interfaces
+    let switched = interface.ethernet?.switchedVlan
+    where isPresent(switched)
+    foreach entry in switched.trunkVlans
+    foreach vlan in vlanIds(entry)
+    select {device: device.name, interface: interface.name, vlan: vlan}
+
+Inline in a `let`, one Integer per case: parenthesize the `when`, and put no `;` after the last alternative:
+
+    // reads a union
+    foreach device in network.devices
+    foreach interface in device.interfaces
+    let switched = interface.ethernet?.switchedVlan
+    where isPresent(switched)
+    foreach entry in switched.trunkVlans
+    let low = (when entry is
+                 ID(id) -> id;
+                 RANGE(range) -> range.from)
+    let high = (when entry is
+                  ID(id) -> id;
+                  RANGE(range) -> range.to)
+    select {device: device.name, interface: interface.name, low: low, high: high}
+
+A default branch is `otherwise ->` (a typed null is `null : Integer`); in a `where`, give a Boolean per case:
+
+    // reads a union
+    foreach device in network.devices
+    foreach interface in device.interfaces
+    let switched = interface.ethernet?.switchedVlan
+    where isPresent(switched)
+    foreach entry in switched.trunkVlans
+    let single = (when entry is
+                    ID(id) -> id;
+                    otherwise -> null : Integer)
+    where isPresent(single)
+    where (when entry is
+             ID(id) -> id == 1100;
+             RANGE(range) -> range.from <= 1100 && 1100 <= range.to)
+    select {device: device.name, vlan: single}
+
+What does not parse or compile (each reproduced on the live server, and reported the same by `fwdctl nqe lint`):
+
+    // does not compile: a union has no fields
+    foreach device in network.devices
+    foreach interface in device.interfaces
+    let switched = interface.ethernet?.switchedVlan
+    where isPresent(switched)
+    foreach entry in switched.trunkVlans
+    select {device: device.name, id: entry.ID, from: entry.RANGE.from}
+
+    // does not parse: a ; after the last alternative when another clause follows
+    foreach device in network.devices
+    foreach interface in device.interfaces
+    let switched = interface.ethernet?.switchedVlan
+    where isPresent(switched)
+    foreach entry in switched.trunkVlans
+    let low = when entry is
+                ID(id) -> id;
+                RANGE(range) -> range.from;
+    select {device: device.name, low: low}
+
+The same family: a bare `let x = foreach ...` does not parse, write `let x = (foreach ...)`.
 
 ## Time
 
