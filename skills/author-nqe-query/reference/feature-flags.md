@@ -12,10 +12,11 @@ Forward serves each organization a data model filtered by its **feature flags** 
 | `additional-host-info` | `NQE_ADDITIONAL_HOST_INFO` | off | extra host fields: operating system, addresses, gateway interfaces, security zones, listening ports | Forward only |
 | `peer-lldp-cdp-capability` | `PEER_LLDP_CDP_CAPABILITY` | on | the capabilities a discovery neighbor advertises | on-premises org admin, otherwise Forward |
 | `lldp-chassis-id` | `NQE_LLDP_CHASSIS_ID` | off | the LLDP chassis id of a neighbor | same |
-| `device-services` | `NQE_DEVICE_SERVICES` | off | `device.services`: DNS, log, NTP and TACACS server configuration | same |
+| `device-services` | `NQE_DEVICE_SERVICES` | on (new in 26.11: on from 26.11.0-10, off in 26.11.0-01, absent in 26.10) | `device.services`: DNS, log, NTP and TACACS server configuration | same |
 | `trim-builtin` | `NQE_TRIM_BUILTIN` | on | the `trim()` function | same |
+| `enhanced-ip-match-conditions` | `NQE_ENHANCED_IP_MATCH_CONDITIONS` | on (new in 26.11, absent in 26.10) | `ipv4SrcSet`, `ipv4DstSet`, `ipv6SrcSet`, `ipv6DstSet` on an ACL or NAT entry's `headerMatches`; the older `ipv4Src`, `ipv4Dst`, `ipv6Src`, `ipv6Dst` and `domains` are deprecated (lint warns with Forward's advice) | same |
 | `parquet` | `NQE_PARQUET` | off | how Forward stores results: no effect on what you can write | same |
-| `numeric-column-summaries` | `NQE_DASHBOARD_PANELS` | on | summary statistics of numeric result columns: no effect on what you can write | same |
+| `numeric-column-summaries` | `NQE_DASHBOARD_METRIC_PANELS` (26.10 and earlier: `NQE_DASHBOARD_PANELS`) | on | summary statistics of numeric result columns: no effect on what you can write | same |
 
 The security policy model is experimental for Palo Alto and Fortinet: expect it to change. A model needs data, so a flag turned on after a snapshot was processed may not give that snapshot the new data; the property also controls whether Forward parses the rules (read in Forward's parsing configuration; not confirmed on a live organization), so test against a snapshot processed after it was enabled.
 
