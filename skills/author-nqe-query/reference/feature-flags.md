@@ -14,7 +14,7 @@ Forward serves each organization a data model filtered by its **feature flags** 
 | `lldp-chassis-id` | `NQE_LLDP_CHASSIS_ID` | off | the LLDP chassis id of a neighbor | same |
 | `device-services` | `NQE_DEVICE_SERVICES` | on (new in 26.11: on from 26.11.0-10, off in 26.11.0-01, absent in 26.10) | `device.services`: DNS, log, NTP and TACACS server configuration | same |
 | `trim-builtin` | `NQE_TRIM_BUILTIN` | on | the `trim()` function | same |
-| `enhanced-ip-match-conditions` | `NQE_ENHANCED_IP_MATCH_CONDITIONS` | on (new in 26.11, absent in 26.10) | `ipv4SrcSet`, `ipv4DstSet`, `ipv6SrcSet`, `ipv6DstSet` on an ACL or NAT entry's `headerMatches`; the older `ipv4Src`, `ipv4Dst`, `ipv6Src`, `ipv6Dst` and `domains` are deprecated (lint warns with Forward's advice) | same |
+| `enhanced-ip-match-conditions` | `NQE_ENHANCED_IP_MATCH_CONDITIONS` | on (new in 26.11, absent in 26.10) | `ipv4SrcSet`, `ipv4DstSet`, `ipv6SrcSet`, `ipv6DstSet` on an ACL or NAT entry's `headerMatches`; the older `ipv4Src`, `ipv4Dst`, `ipv6Src`, `ipv6Dst` and `domains` are deprecated (lint warns with Forward's advice). Measured once on a 26.11 org: replacing `intersect(ipAddressSet(acl.headerMatches.ipv4Src), ipAddressSet(nat.headerMatches.ipv4Src))` with the `ipv4SrcSet` fields gave identical results and ran about 20-25% faster (300 ACL x 3,886 NAT entries, cold) | same |
 | `parquet` | `NQE_PARQUET` | off | how Forward stores results: no effect on what you can write | same |
 | `numeric-column-summaries` | `NQE_DASHBOARD_METRIC_PANELS` (26.10 and earlier: `NQE_DASHBOARD_PANELS`) | on | summary statistics of numeric result columns: no effect on what you can write | same |
 
